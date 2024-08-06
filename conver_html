@@ -1,0 +1,41 @@
+import pandas as pd
+from google.colab import drive
+import requests
+
+# Mount Google Drive
+drive.mount('/content/drive')
+
+def excel_to_html(excel_file, html_file):
+    # Read the Excel file
+    df = pd.read_excel(excel_file)
+
+    # Assuming the columns are labeled as A, B, C, D, and E in the DataFrame
+    # Iterate over each row to format the HTML content
+    html_content = '<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Document</title>\n</head>\n<body>\n'
+
+    for index, row in df.iterrows():
+        # Create a hyperlink in D to the title in C
+        link = f'<a href="{row["Link"]}">{row["Title"]}</a>'
+
+        # Combine the text of B and E in parentheses and attach it after C
+        combined_text = f'({row["Publisher"]}, {row["Posted At"]})'
+
+        # Format the final string according to the order specified
+        final_string = f'• {link} {combined_text}'
+
+        # Append the formatted string to the HTML content
+        html_content += f'    <p>{final_string}</p>\n'
+
+    # Close the HTML tags
+    html_content += '</body>\n</html>'
+
+    # Write the HTML content to a file
+    with open(html_file, 'w', encoding='utf-8') as f:
+        f.write(html_content)
+
+    print(f'HTML file saved as {html_file}')
+
+# Example usage
+excel_file = '/content/drive/My Drive/news_feed_20240729_123648_re.xlsx'  # Replace with your Excel file path
+html_file = '/content/drive/My Drive/news_feed_20240729_123648_re.html'  # Name of the HTML file to be saved
+excel_to_html(excel_file, html_file)
